@@ -24,4 +24,26 @@ const EXCUSE =
 
 const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
+// Competition limits ("The One-Line Excuse"): the entry must be a single
+// line of 1–160 characters. Enforced here so a bad edit fails loudly
+// instead of silently producing an entry the judge rejects.
+const MIN_EXCUSE_LENGTH = 1;
+const MAX_EXCUSE_LENGTH = 160;
+
+function validateExcuse(excuse) {
+  if (excuse.length < MIN_EXCUSE_LENGTH || excuse.length > MAX_EXCUSE_LENGTH) {
+    throw new Error(
+      `Excuse must be ${MIN_EXCUSE_LENGTH}-${MAX_EXCUSE_LENGTH} characters, got ${excuse.length}.`,
+    );
+  }
+  if (excuse.includes('\n') || excuse.includes('\r')) {
+    throw new Error('Excuse must be a single line (no newline characters).');
+  }
+  if (excuse.trim().length === 0) {
+    throw new Error('Excuse must not be only whitespace.');
+  }
+}
+
+validateExcuse(EXCUSE);
+
 writeFileSync(join(outputDir, 'entry.txt'), EXCUSE, 'utf8');
